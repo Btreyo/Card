@@ -1,0 +1,1064 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<meta name="theme-color" content="#0a0a0a" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<meta name="apple-mobile-web-app-title" content="Bobbi T-Y" />
+<meta name="mobile-web-app-capable" content="yes" />
+
+<title>Bobbi Trehan-Young — Digital Card</title>
+
+<link rel="manifest" href="manifest.json" />
+<link rel="apple-touch-icon" href="icon-192.png" />
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
+<style>
+:root {
+  --gold: #C9A961;
+  --gold-soft: #D4B97A;
+  --gold-deep: #8C7339;
+  --ink: #0A0A0A;
+  --ink-soft: #1A1A1A;
+  --cream: #F5F0E8;
+  --cream-dim: #C8C2B6;
+  --line: rgba(201, 169, 97, 0.18);
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+html, body {
+  background: var(--ink);
+  color: var(--cream);
+  font-family: 'Inter', -apple-system, sans-serif;
+  font-weight: 300;
+  letter-spacing: 0.01em;
+  min-height: 100vh;
+  min-height: 100dvh;
+  overflow-x: hidden;
+  overscroll-behavior: none;
+}
+
+body {
+  background:
+    radial-gradient(ellipse at top, rgba(201, 169, 97, 0.08) 0%, transparent 50%),
+    radial-gradient(ellipse at bottom, rgba(201, 169, 97, 0.04) 0%, transparent 60%),
+    var(--ink);
+  padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+}
+
+/* Subtle grain overlay */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+  opacity: 0.4;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3CfeColorMatrix values='0 0 0 0 0.79 0 0 0 0 0.66 0 0 0 0 0.38 0 0 0 0.04 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+.app {
+  position: relative;
+  z-index: 2;
+  max-width: 440px;
+  margin: 0 auto;
+  padding: 24px 20px 40px;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* — Header monogram — */
+.brand-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 32px;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 11px;
+  letter-spacing: 0.4em;
+  text-transform: uppercase;
+  color: var(--gold);
+  opacity: 0.85;
+  animation: fadeIn 0.8s ease-out;
+}
+
+.brand-bar .dot {
+  width: 4px; height: 4px; background: var(--gold);
+  border-radius: 50%;
+  box-shadow: 0 0 8px var(--gold);
+}
+
+/* — The Card — */
+.card {
+  position: relative;
+  background: linear-gradient(155deg, #181818 0%, #0c0c0c 60%, #1a1612 100%);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 36px 28px 30px;
+  box-shadow:
+    0 1px 0 rgba(255,255,255,0.04) inset,
+    0 30px 80px -20px rgba(0,0,0,0.6),
+    0 0 0 1px rgba(201, 169, 97, 0.03);
+  overflow: hidden;
+  animation: cardIn 1s cubic-bezier(0.2, 0.8, 0.2, 1) 0.1s both;
+}
+
+/* Gold corner ornaments */
+.card::before, .card::after {
+  content: '';
+  position: absolute;
+  width: 28px; height: 28px;
+  border-color: var(--gold);
+  opacity: 0.5;
+}
+.card::before {
+  top: 14px; left: 14px;
+  border-top: 1px solid; border-left: 1px solid;
+}
+.card::after {
+  bottom: 14px; right: 14px;
+  border-bottom: 1px solid; border-right: 1px solid;
+}
+
+.crest {
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+  font-weight: 300;
+  font-size: 11px;
+  letter-spacing: 0.35em;
+  text-transform: uppercase;
+  color: var(--gold);
+  text-align: center;
+  margin-bottom: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+}
+.crest .line { flex: 1; height: 1px; background: linear-gradient(90deg, transparent, var(--gold) 50%, transparent); opacity: 0.5; max-width: 60px; }
+
+/* Tappable share crest variant */
+.crest-share {
+  background: transparent;
+  border: none;
+  width: 100%;
+  cursor: pointer;
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+  font-weight: 300;
+  font-size: 11px;
+  letter-spacing: 0.35em;
+  text-transform: uppercase;
+  color: var(--gold);
+  padding: 4px 0;
+  transition: opacity 0.25s ease;
+}
+.crest-share:hover { opacity: 0.75; }
+.crest-share:hover .crest-icon { transform: translateY(-1px); }
+.crest-share:active { transform: scale(0.98); }
+.crest-text {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  white-space: nowrap;
+}
+.crest-icon {
+  width: 12px; height: 12px;
+  fill: none;
+  stroke: var(--gold);
+  stroke-width: 1.5;
+  transition: transform 0.25s ease;
+}
+
+.monogram {
+  width: 96px; height: 96px;
+  margin: 0 auto 22px;
+  border: 1px solid var(--gold);
+  border-radius: 50%;
+  overflow: hidden;
+  position: relative;
+  background: var(--ink-soft);
+  box-shadow: 0 0 0 4px var(--ink), 0 0 0 5px rgba(201, 169, 97, 0.4), 0 8px 24px rgba(0,0,0,0.4);
+}
+.monogram img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.monogram::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  box-shadow: inset 0 0 0 1px rgba(201, 169, 97, 0.4);
+  pointer-events: none;
+}
+
+.name {
+  font-family: 'Cormorant Garamond', serif;
+  font-weight: 400;
+  font-size: 30px;
+  line-height: 1.05;
+  text-align: center;
+  letter-spacing: 0.005em;
+  color: var(--cream);
+  margin-bottom: 6px;
+}
+.name .amp { color: var(--gold); font-style: italic; font-weight: 300; }
+
+.title {
+  text-align: center;
+  font-size: 10.5px;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  color: var(--cream-dim);
+  margin-bottom: 14px;
+  font-weight: 400;
+}
+
+.credentials {
+  text-align: center;
+  font-size: 10.5px;
+  line-height: 1.7;
+  color: var(--cream-dim);
+  margin-bottom: 22px;
+  padding: 0 6px;
+  font-weight: 300;
+  letter-spacing: 0.02em;
+}
+.credentials .pipe {
+  color: var(--gold);
+  margin: 0 6px;
+  opacity: 0.55;
+}
+
+.divider {
+  width: 40px; height: 1px;
+  background: var(--gold);
+  margin: 0 auto 22px;
+  opacity: 0.6;
+}
+
+.companies {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 18px 16px;
+  background: rgba(201, 169, 97, 0.03);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  margin-bottom: 6px;
+}
+.company {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 12px;
+  font-size: 12px;
+  text-decoration: none;
+  color: inherit;
+  transition: opacity 0.25s ease;
+}
+.company:hover { opacity: 0.75; }
+.company:hover .nm { color: var(--gold); }
+.company .nm {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 15px;
+  color: var(--cream);
+  letter-spacing: 0.02em;
+  transition: color 0.25s ease;
+}
+.company .role {
+  font-size: 9.5px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--gold);
+  white-space: nowrap;
+}
+
+.tagline {
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+  font-size: 14px;
+  text-align: center;
+  color: var(--cream-dim);
+  line-height: 1.5;
+  padding: 0 8px;
+}
+
+/* — Action grid — */
+.actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-top: 24px;
+  animation: fadeIn 0.8s ease-out 0.4s both;
+}
+
+.btn {
+  background: transparent;
+  border: 1px solid var(--line);
+  color: var(--cream);
+  padding: 16px 14px;
+  border-radius: 12px;
+  font-family: 'Inter', sans-serif;
+  font-size: 11px;
+  font-weight: 400;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+}
+.btn:active { transform: scale(0.97); }
+.btn:hover {
+  border-color: var(--gold);
+  background: rgba(201, 169, 97, 0.05);
+}
+.btn svg { width: 22px; height: 22px; stroke: var(--gold); fill: none; stroke-width: 1.2; }
+
+.btn.primary {
+  grid-column: span 2;
+  background: var(--gold);
+  color: var(--ink);
+  border-color: var(--gold);
+  font-weight: 500;
+  letter-spacing: 0.22em;
+  padding: 18px;
+}
+.btn.primary svg { stroke: var(--ink); stroke-width: 1.5; }
+.btn.primary:hover { background: var(--gold-soft); }
+
+.btn.primary.outline {
+  background: transparent;
+  color: var(--gold);
+  border: 1px solid var(--gold);
+}
+.btn.primary.outline svg { stroke: var(--gold); }
+.btn.primary.outline:hover {
+  background: rgba(201, 169, 97, 0.08);
+}
+
+.actions {
+  grid-template-columns: 1fr;
+  gap: 12px;
+}
+.btn.primary { grid-column: span 1; }
+
+/* — Share options list — */
+.share-options { display: flex; flex-direction: column; gap: 8px; margin-top: 4px; }
+.share-opt {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 16px;
+  background: rgba(201, 169, 97, 0.03);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  color: var(--cream);
+  cursor: pointer;
+  text-align: left;
+  font-family: inherit;
+  transition: all 0.25s ease;
+  width: 100%;
+}
+.share-opt:hover {
+  border-color: var(--gold);
+  background: rgba(201, 169, 97, 0.08);
+}
+.share-opt:hover .share-chev { transform: translateX(3px); color: var(--gold); }
+.share-opt:active { transform: scale(0.98); }
+.share-icon {
+  width: 38px; height: 38px;
+  border-radius: 50%;
+  border: 1px solid var(--line);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  color: var(--gold);
+  background: rgba(201, 169, 97, 0.04);
+}
+.share-icon svg { width: 18px; height: 18px; }
+.share-text { flex: 1; }
+.share-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 16px;
+  color: var(--cream);
+  letter-spacing: 0.02em;
+  line-height: 1.2;
+}
+.share-desc {
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--cream-dim);
+  margin-top: 3px;
+}
+.share-chev {
+  color: var(--cream-dim);
+  font-size: 16px;
+  transition: all 0.25s ease;
+}
+
+/* — QR display inside share modal — */
+.qr-display {
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 8px;
+}
+.qr-display.show { display: flex; }
+.share-options.hide { display: none; }
+.back-btn {
+  margin-top: 16px;
+  background: transparent;
+  border: 1px solid var(--line);
+  color: var(--cream-dim);
+  padding: 10px 20px;
+  border-radius: 100px;
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  cursor: pointer;
+  font-family: inherit;
+  transition: all 0.25s ease;
+}
+.back-btn:hover { border-color: var(--gold); color: var(--gold); }
+
+/* — Socials — */
+.socials {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 22px;
+  padding-top: 22px;
+  border-top: 1px solid var(--line);
+  animation: fadeIn 0.8s ease-out 0.6s both;
+}
+.social {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 1px solid var(--line);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--gold);
+  text-decoration: none;
+  transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+  background: rgba(201, 169, 97, 0.02);
+  position: relative;
+}
+.social svg {
+  width: 16px;
+  height: 16px;
+  fill: currentColor;
+  transition: transform 0.3s ease;
+}
+.social:hover {
+  border-color: var(--gold);
+  background: var(--gold);
+  color: var(--ink);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px -8px rgba(201, 169, 97, 0.5);
+}
+.social:hover svg { transform: scale(1.1); }
+.social:active { transform: translateY(0); }
+
+/* — Modal (QR) — */
+.modal {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  background: rgba(0, 0, 0, 0.85);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  animation: fadeIn 0.3s ease-out;
+}
+.modal.open { display: flex; }
+
+.modal-card {
+  background: linear-gradient(155deg, #181818, #0c0c0c);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 32px 24px 24px;
+  max-width: 360px;
+  width: 100%;
+  position: relative;
+  text-align: center;
+  animation: cardIn 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.modal-close {
+  position: absolute;
+  top: 14px; right: 14px;
+  width: 32px; height: 32px;
+  border-radius: 50%;
+  border: 1px solid var(--line);
+  background: transparent;
+  color: var(--cream);
+  cursor: pointer;
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 22px;
+  color: var(--cream);
+  margin-bottom: 4px;
+}
+.modal-sub {
+  font-size: 10px;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 22px;
+}
+
+#qrcode {
+  background: var(--cream);
+  padding: 18px;
+  border-radius: 12px;
+  display: inline-block;
+  margin-bottom: 18px;
+  box-shadow: 0 0 0 1px var(--gold);
+}
+#qrcode img, #qrcode canvas { display: block; }
+
+.modal-hint {
+  font-size: 11px;
+  color: var(--cream-dim);
+  line-height: 1.6;
+  letter-spacing: 0.04em;
+}
+
+/* — Toast — */
+.toast {
+  position: fixed;
+  bottom: 32px;
+  left: 50%;
+  transform: translateX(-50%) translateY(20px);
+  background: var(--gold);
+  color: var(--ink);
+  padding: 12px 22px;
+  border-radius: 100px;
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  font-weight: 500;
+  opacity: 0;
+  pointer-events: none;
+  transition: all 0.3s ease;
+  z-index: 200;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+}
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+/* — Footer — */
+.footer {
+  text-align: center;
+  margin-top: 28px;
+  font-size: 9px;
+  letter-spacing: 0.4em;
+  text-transform: uppercase;
+  color: var(--cream-dim);
+  opacity: 0.5;
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+  letter-spacing: 0.25em;
+}
+
+/* — Animations — */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes cardIn {
+  from { opacity: 0; transform: translateY(20px) scale(0.98); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* Install banner */
+.install-banner {
+  display: none;
+  margin-top: 16px;
+  padding: 12px 16px;
+  background: rgba(201, 169, 97, 0.08);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  font-size: 11px;
+  color: var(--cream-dim);
+  text-align: center;
+  letter-spacing: 0.05em;
+}
+.install-banner.show { display: block; animation: fadeIn 0.5s ease-out; }
+.install-banner b { color: var(--gold); font-weight: 500; }
+
+</style>
+</head>
+<body>
+
+<div class="app">
+
+  <div class="brand-bar">
+    <span>Digital</span>
+    <span class="dot"></span>
+    <span>Business Card</span>
+  </div>
+
+  <!-- THE CARD -->
+  <div class="card">
+    <button class="crest crest-share" onclick="openShare()" aria-label="Share card">
+      <span class="line"></span>
+      <span class="crest-text">
+        <svg viewBox="0 0 24 24" class="crest-icon" aria-hidden="true">
+          <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/>
+          <polyline points="16 6 12 2 8 6"/>
+          <line x1="12" y1="2" x2="12" y2="15"/>
+        </svg>
+        Tap to Share
+      </span>
+      <span class="line"></span>
+    </button>
+
+    <div class="monogram"><img src="profile.jpg" alt="Bobbi Trehan-Young" /></div>
+
+    <h1 class="name">Bobbi Trehan-Young</h1>
+    <p class="title">Founder &middot; Chief Executive Officer</p>
+
+    <p class="credentials">
+      Microsoft SME &amp; Architect
+      <span class="pipe">|</span> Engineer, BAE Systems (Edgewing Programme)
+      <span class="pipe">|</span> Fractional Board Director &amp; Advisory Board Member
+      <span class="pipe">|</span> Decarbonisation &amp; Clean Energy Investor
+      <span class="pipe">|</span> UN Women UK Participant CSW68/69/70
+      <span class="pipe">|</span> Trainer &amp; Mentor to Young Adults
+      <span class="pipe">|</span> Head Judge, Forty Under 40 UK &amp; Global
+    </p>
+
+    <div class="divider"></div>
+
+    <div class="companies">
+      <a href="https://www.bobbildn.com/" target="_blank" rel="noopener" class="company">
+        <span class="nm">Bobbi | London<sup style="font-size:7px">&trade;</sup></span>
+        <span class="role">Founder / CEO</span>
+      </a>
+      <a href="https://www.etechfusiongroup.com/" target="_blank" rel="noopener" class="company">
+        <span class="nm">eTech Fusion Group</span>
+        <span class="role">Founder / CEO</span>
+      </a>
+      <a href="https://corporatedynamism.com" target="_blank" rel="noopener" class="company">
+        <span class="nm">Corporate Dynamism</span>
+        <span class="role">Founder / CEO</span>
+      </a>
+    </div>
+
+    <div class="socials">
+      <a href="https://www.linkedin.com/in/bobbitrehanyoung/" target="_blank" rel="noopener" class="social" aria-label="LinkedIn" title="LinkedIn">
+        <svg viewBox="0 0 24 24"><path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14M18.5 18.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.32 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.79M6.88 8.56a1.68 1.68 0 0 0 1.68-1.68c0-.93-.75-1.69-1.68-1.69a1.69 1.69 0 0 0-1.69 1.69c0 .93.76 1.68 1.69 1.68m1.39 9.94v-8.37H5.5v8.37h2.77z"/></svg>
+      </a>
+
+      <a href="https://instagram.com/btreyo" target="_blank" rel="noopener" class="social" aria-label="Instagram" title="Instagram">
+        <svg viewBox="0 0 24 24"><path d="M7.8 2h8.4C19.4 2 22 4.6 22 7.8v8.4a5.8 5.8 0 0 1-5.8 5.8H7.8C4.6 22 2 19.4 2 16.2V7.8A5.8 5.8 0 0 1 7.8 2m-.2 2A3.6 3.6 0 0 0 4 7.6v8.8C4 18.39 5.61 20 7.6 20h8.8a3.6 3.6 0 0 0 3.6-3.6V7.6C20 5.61 18.39 4 16.4 4H7.6m9.65 1.5a1.25 1.25 0 0 1 1.25 1.25A1.25 1.25 0 0 1 17.25 8 1.25 1.25 0 0 1 16 6.75a1.25 1.25 0 0 1 1.25-1.25M12 7a5 5 0 0 1 5 5 5 5 0 0 1-5 5 5 5 0 0 1-5-5 5 5 0 0 1 5-5m0 2a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3z"/></svg>
+      </a>
+
+      <a href="https://facebook.com/btreyo" target="_blank" rel="noopener" class="social" aria-label="Facebook" title="Facebook">
+        <svg viewBox="0 0 24 24"><path d="M12 2.04c-5.5 0-10 4.49-10 10.02 0 5 3.66 9.15 8.44 9.9v-7H7.9v-2.9h2.54V9.85c0-2.51 1.49-3.89 3.78-3.89 1.09 0 2.23.19 2.23.19v2.47h-1.26c-1.24 0-1.63.77-1.63 1.56v1.88h2.78l-.45 2.9h-2.33v7a10 10 0 0 0 8.44-9.9c0-5.53-4.5-10.02-10-10.02z"/></svg>
+      </a>
+
+      <a href="https://twitter.com/trehanyoung" target="_blank" rel="noopener" class="social" aria-label="X (Twitter)" title="X">
+        <svg viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+      </a>
+
+      <a href="https://www.tiktok.com/@bobbilondon" target="_blank" rel="noopener" class="social" aria-label="TikTok" title="TikTok">
+        <svg viewBox="0 0 24 24"><path d="M16.6 5.82s.51.5 0 0A4.278 4.278 0 0 1 15.54 3h-3.09v12.4a2.592 2.592 0 0 1-2.59 2.5c-1.42 0-2.6-1.16-2.6-2.6 0-1.72 1.66-3.01 3.37-2.48V9.66c-3.45-.46-6.47 2.22-6.47 5.64 0 3.33 2.76 5.7 5.69 5.7 3.14 0 5.69-2.55 5.69-5.7V9.01a7.35 7.35 0 0 0 4.3 1.38V7.3s-1.88.09-3.24-1.48z"/></svg>
+      </a>
+
+      <a href="mailto:trehanyoung@gmail.com" class="social" aria-label="Email" title="Email">
+        <svg viewBox="0 0 24 24"><path d="M20 4H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2m0 4-8 5-8-5V6l8 5 8-5z"/></svg>
+      </a>
+
+      <a href="https://api.whatsapp.com/send?phone=447493910405" target="_blank" rel="noopener" class="social" aria-label="WhatsApp" title="WhatsApp">
+        <svg viewBox="0 0 24 24"><path d="M16.75 13.96c.25.13.41.2.46.3.06.11.04.61-.21 1.18-.2.56-1.24 1.1-1.7 1.12-.46.02-.47.36-2.96-.73-2.49-1.09-3.99-3.75-4.11-3.92-.12-.17-.96-1.38-.92-2.61.05-1.22.69-1.8.95-2.04.24-.26.51-.29.68-.26h.47c.15 0 .36-.06.55.45l.69 1.87c.06.13.1.28.01.44l-.27.41-.39.42c-.12.12-.26.25-.12.5.12.26.62 1.09 1.32 1.78.91.88 1.71 1.17 1.95 1.3.24.14.39.12.54-.04l.81-.94c.19-.25.35-.19.58-.11l1.67.79M12 2a10 10 0 0 1 10 10 10 10 0 0 1-10 10c-1.97 0-3.8-.57-5.35-1.55L2 22l1.55-4.65A9.969 9.969 0 0 1 2 12 10 10 0 0 1 12 2m0 2a8 8 0 0 0-8 8c0 1.72.54 3.31 1.46 4.61L4.5 19.5l2.89-.96A7.95 7.95 0 0 0 12 20a8 8 0 0 0 8-8 8 8 0 0 0-8-8z"/></svg>
+      </a>
+    </div>
+  </div>
+
+  <!-- ACTIONS -->
+  <div class="actions">
+    <button class="btn primary" onclick="saveContact()">
+      <svg viewBox="0 0 24 24"><path d="M12 4v16m-8-8h16"/></svg>
+      Save to Contacts
+    </button>
+
+    <button class="btn primary outline" onclick="openShare()">
+      <svg viewBox="0 0 24 24">
+        <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/>
+        <polyline points="16 6 12 2 8 6"/>
+        <line x1="12" y1="2" x2="12" y2="15"/>
+      </svg>
+      Share Card
+    </button>
+  </div>
+
+  <div class="install-banner" id="installBanner">
+    <b>Install on iPhone:</b> Tap <b>Share</b> &rarr; <b>Add to Home Screen</b>
+  </div>
+
+  <div class="footer">Bobbi | London &mdash; MMXXVI</div>
+
+</div>
+
+<!-- SHARE MODAL -->
+<div class="modal" id="shareModal">
+  <div class="modal-card share-card">
+    <button class="modal-close" onclick="closeShare()">&times;</button>
+    <h3 class="modal-title">Share Card</h3>
+    <p class="modal-sub">Choose a method</p>
+
+    <div class="share-options">
+      <button class="share-opt" onclick="shareViaURL()">
+        <div class="share-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4">
+            <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/>
+            <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>
+          </svg>
+        </div>
+        <div class="share-text">
+          <div class="share-title">Copy URL</div>
+          <div class="share-desc">Send a shareable link</div>
+        </div>
+        <span class="share-chev">&rarr;</span>
+      </button>
+
+      <button class="share-opt" onclick="shareViaQR()">
+        <div class="share-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4">
+            <rect x="3" y="3" width="7" height="7"/>
+            <rect x="14" y="3" width="7" height="7"/>
+            <rect x="3" y="14" width="7" height="7"/>
+            <path d="M14 14h3v3h-3zM18 18h3v3h-3z"/>
+          </svg>
+        </div>
+        <div class="share-text">
+          <div class="share-title">QR Code</div>
+          <div class="share-desc">Scan with any camera</div>
+        </div>
+        <span class="share-chev">&rarr;</span>
+      </button>
+
+      <button class="share-opt" onclick="shareViaNFC()">
+        <div class="share-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4">
+            <path d="M5 12a14 14 0 0 1 14 0M8.5 14.5a8 8 0 0 1 7 0M12 17h.01"/>
+          </svg>
+        </div>
+        <div class="share-text">
+          <div class="share-title">NFC Tap</div>
+          <div class="share-desc">Write to a tag</div>
+        </div>
+        <span class="share-chev">&rarr;</span>
+      </button>
+
+      <button class="share-opt" onclick="shareViaSystem()">
+        <div class="share-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4">
+            <circle cx="18" cy="5" r="3"/>
+            <circle cx="6" cy="12" r="3"/>
+            <circle cx="18" cy="19" r="3"/>
+            <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/>
+            <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
+          </svg>
+        </div>
+        <div class="share-text">
+          <div class="share-title">More</div>
+          <div class="share-desc">Apple / Android share sheet</div>
+        </div>
+        <span class="share-chev">&rarr;</span>
+      </button>
+    </div>
+
+    <!-- QR display area, hidden by default -->
+    <div class="qr-display" id="qrDisplay">
+      <div id="qrcode"></div>
+      <p class="modal-hint">Scan with any phone camera<br>to receive Bobbi's contact card</p>
+      <button class="back-btn" onclick="hideQR()">&larr; Back</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast">Copied</div>
+
+<script>
+// ============= CONTACT DATA =============
+const contact = {
+  firstName: "Bobbi",
+  lastName: "Trehan-Young",
+  fullName: "Bobbi Trehan-Young",
+  title: "Founder & CEO",
+  organization: "Bobbi | London | eTech Fusion Group | Corporate Dynamism",
+  email: "trehanyoung@gmail.com",
+  emailWork: "B2B@bobbildn.com",
+  phone: "+447493910405",
+  website: "https://www.bobbildn.com/",
+  city: "London",
+  country: "United Kingdom",
+  notes: "Founder & CEO of Bobbi | London, eTech Fusion Group & Corporate Dynamism. Microsoft SME & Architect. BAE Systems Engineer (Edgewing Programme). Fractional Board Director & Advisory Board Member. Decarbonisation & Clean Energy Investor. UN Women UK Participant CSW68/69/70. Head Judge, Forty Under 40 UK & Global.",
+  socials: {
+    linkedin: "https://www.linkedin.com/in/bobbitrehanyoung/",
+    instagram: "https://instagram.com/btreyo",
+    facebook: "https://facebook.com/btreyo",
+    x: "https://twitter.com/trehanyoung",
+    tiktok: "https://www.tiktok.com/@bobbilondon",
+    whatsapp: "https://api.whatsapp.com/send?phone=447493910405"
+  }
+};
+
+// URL where this card lives — update if hosted elsewhere
+const CARD_URL = window.location.href.split('?')[0].split('#')[0];
+
+// Photo cached as base64 once loaded so vCard can include it
+let PHOTO_B64 = null;
+async function loadPhotoB64() {
+  if (PHOTO_B64) return PHOTO_B64;
+  try {
+    const res = await fetch("profile.jpg");
+    const blob = await res.blob();
+    PHOTO_B64 = await new Promise((resolve, reject) => {
+      const r = new FileReader();
+      r.onload = () => resolve(r.result.split(",")[1]);
+      r.onerror = reject;
+      r.readAsDataURL(blob);
+    });
+    return PHOTO_B64;
+  } catch (e) {
+    return null;
+  }
+}
+// Pre-load on page open
+loadPhotoB64();
+
+// ============= vCard GENERATION =============
+function generateVCard() {
+  const lines = [
+    "BEGIN:VCARD",
+    "VERSION:3.0",
+    `N:${contact.lastName};${contact.firstName};;;`,
+    `FN:${contact.fullName}`,
+    `ORG:${contact.organization}`,
+    `TITLE:${contact.title}`,
+    contact.email ? `EMAIL;TYPE=INTERNET,PREF:${contact.email}` : "",
+    contact.emailWork ? `EMAIL;TYPE=INTERNET,WORK:${contact.emailWork}` : "",
+    contact.phone ? `TEL;TYPE=CELL:${contact.phone}` : "",
+    contact.website ? `URL:${contact.website}` : "",
+    `ADR;TYPE=WORK:;;;${contact.city};;;${contact.country}`,
+    contact.socials.linkedin ? `X-SOCIALPROFILE;TYPE=linkedin:${contact.socials.linkedin}` : "",
+    contact.socials.instagram ? `X-SOCIALPROFILE;TYPE=instagram:${contact.socials.instagram}` : "",
+    contact.socials.facebook ? `X-SOCIALPROFILE;TYPE=facebook:${contact.socials.facebook}` : "",
+    contact.socials.x ? `X-SOCIALPROFILE;TYPE=twitter:${contact.socials.x}` : "",
+    contact.socials.tiktok ? `X-SOCIALPROFILE;TYPE=tiktok:${contact.socials.tiktok}` : "",
+    contact.socials.whatsapp ? `X-SOCIALPROFILE;TYPE=whatsapp:${contact.socials.whatsapp}` : "",
+  ];
+
+  // Embed photo if available — broken into 75-char lines per vCard 3.0 spec
+  if (PHOTO_B64) {
+    const folded = PHOTO_B64.match(/.{1,75}/g).join("\r\n ");
+    lines.push(`PHOTO;ENCODING=b;TYPE=JPEG:${folded}`);
+  }
+
+  lines.push(`NOTE:${contact.notes}`);
+  lines.push(`REV:${new Date().toISOString()}`);
+  lines.push("END:VCARD");
+  return lines.filter(Boolean).join("\r\n");
+}
+
+function getVCardBlob() {
+  return new Blob([generateVCard()], { type: "text/vcard;charset=utf-8" });
+}
+
+// ============= SAVE TO CONTACTS =============
+async function saveContact() {
+  // Make sure photo is loaded before building vCard so contact card has a face
+  await loadPhotoB64();
+  const blob = getVCardBlob();
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "Bobbi-Trehan-Young.vcf";
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+  toast("Contact downloaded");
+}
+
+// ============= SHARE MODAL =============
+function openShare() {
+  document.getElementById("shareModal").classList.add("open");
+  hideQR();
+}
+function closeShare() {
+  document.getElementById("shareModal").classList.remove("open");
+  hideQR();
+}
+
+// — Share via URL (copy link) —
+function shareViaURL() {
+  navigator.clipboard.writeText(CARD_URL).then(() => {
+    toast("Link copied to clipboard");
+  }).catch(() => {
+    const ta = document.createElement("textarea");
+    ta.value = CARD_URL;
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand("copy");
+    document.body.removeChild(ta);
+    toast("Link copied");
+  });
+}
+
+// — Share via QR (show inside modal) —
+function shareViaQR() {
+  const container = document.getElementById("qrcode");
+  container.innerHTML = "";
+  new QRCode(container, {
+    text: CARD_URL,
+    width: 220,
+    height: 220,
+    colorDark: "#0A0A0A",
+    colorLight: "#F5F0E8",
+    correctLevel: QRCode.CorrectLevel.H
+  });
+  document.querySelector("#shareModal .share-options").classList.add("hide");
+  document.getElementById("qrDisplay").classList.add("show");
+}
+function hideQR() {
+  const opts = document.querySelector("#shareModal .share-options");
+  if (opts) opts.classList.remove("hide");
+  const qd = document.getElementById("qrDisplay");
+  if (qd) qd.classList.remove("show");
+}
+
+// — Share via NFC (Android Chrome only) —
+async function shareViaNFC() {
+  if (!("NDEFReader" in window)) {
+    toast("NFC writing requires Android Chrome");
+    return;
+  }
+  try {
+    const ndef = new NDEFReader();
+    toast("Hold a writable NFC tag to your phone");
+    await ndef.write({
+      records: [{ recordType: "url", data: CARD_URL }]
+    });
+    toast("NFC tag written successfully");
+  } catch (e) {
+    if (e.name === "NotAllowedError") {
+      toast("NFC permission denied");
+    } else {
+      toast("Could not write to NFC tag");
+    }
+  }
+}
+
+// — System share sheet (Apple / Android native) —
+async function shareViaSystem() {
+  await loadPhotoB64();
+  const shareData = {
+    title: "Bobbi Trehan-Young",
+    text: "Bobbi Trehan-Young — Founder & CEO",
+    url: CARD_URL
+  };
+
+  try {
+    const file = new File([getVCardBlob()], "Bobbi-Trehan-Young.vcf", { type: "text/vcard" });
+    if (navigator.canShare && navigator.canShare({ files: [file] })) {
+      await navigator.share({ ...shareData, files: [file] });
+      return;
+    }
+  } catch (e) { /* fall through */ }
+
+  if (navigator.share) {
+    try { await navigator.share(shareData); return; }
+    catch (e) { return; }
+  }
+
+  shareViaURL();
+}
+
+// ============= TOAST =============
+let toastTimer;
+function toast(msg) {
+  const t = document.getElementById("toast");
+  t.textContent = msg;
+  t.classList.add("show");
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove("show"), 2200);
+}
+
+// ============= CLOSE MODAL ON BACKDROP =============
+document.getElementById("shareModal").addEventListener("click", (e) => {
+  if (e.target.id === "shareModal") closeShare();
+});
+
+// ============= INSTALL HINT (iOS) =============
+(function() {
+  const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+  const isStandalone = window.navigator.standalone || window.matchMedia('(display-mode: standalone)').matches;
+  if (isIOS && !isStandalone) {
+    setTimeout(() => {
+      document.getElementById("installBanner").classList.add("show");
+    }, 2000);
+  }
+})();
+
+// ============= PWA (Android) install prompt =============
+let deferredPrompt;
+window.addEventListener("beforeinstallprompt", (e) => {
+  e.preventDefault();
+  deferredPrompt = e;
+  const banner = document.getElementById("installBanner");
+  banner.innerHTML = `<b>Install this card</b> &mdash; tap to add to your home screen`;
+  banner.classList.add("show");
+  banner.style.cursor = "pointer";
+  banner.onclick = async () => {
+    deferredPrompt.prompt();
+    await deferredPrompt.userChoice;
+    deferredPrompt = null;
+    banner.classList.remove("show");
+  };
+});
+
+// Service worker for PWA install
+if ("serviceWorker" in navigator) {
+  navigator.serviceWorker.register("sw.js").catch(() => {});
+}
+</script>
+
+</body>
+</html>

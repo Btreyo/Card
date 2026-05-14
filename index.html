@@ -640,21 +640,47 @@ body::before {
   to { opacity: 1; transform: translateY(0) scale(1); }
 }
 
-/* Install banner */
-.install-banner {
+/* Install instructions inside share modal */
+.install-display {
   display: none;
-  margin-top: 16px;
-  padding: 12px 16px;
-  background: rgba(139, 137, 125, 0.08);
+  flex-direction: column;
+  margin-top: 12px;
+  padding: 18px 16px;
+  background: rgba(139, 137, 125, 0.04);
   border: 1px solid var(--line);
-  border-radius: 10px;
-  font-size: 11px;
-  color: var(--silver-dim);
-  text-align: center;
-  letter-spacing: 0.05em;
+  border-radius: 12px;
+  text-align: left;
 }
-.install-banner.show { display: block; animation: fadeIn 0.5s ease-out; }
-.install-banner b { color: var(--silver-bright); font-weight: 500; }
+.install-display.show { display: flex; animation: fadeIn 0.3s ease-out; }
+.install-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 14px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--silver-bright);
+  margin: 0 0 8px;
+  font-weight: 400;
+}
+.install-title-2 {
+  margin-top: 16px;
+  padding-top: 14px;
+  border-top: 1px solid var(--line);
+}
+.install-step {
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--silver-dim);
+  margin: 4px 0;
+  letter-spacing: 0.02em;
+}
+.install-step b {
+  color: var(--bone);
+  font-weight: 500;
+}
+
+/* Owner-only elements — hidden by default, shown when ?owner=1 is in URL */
+.owner-only { display: none !important; }
+body.is-owner .owner-only { display: flex !important; }
 
 </style>
 </head>
@@ -670,19 +696,6 @@ body::before {
 
   <!-- THE CARD -->
   <div class="card">
-    <button class="crest crest-share" onclick="openShare()" aria-label="Share card">
-      <span class="line"></span>
-      <span class="crest-text">
-        <svg viewBox="0 0 24 24" class="crest-icon" aria-hidden="true">
-          <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/>
-          <polyline points="16 6 12 2 8 6"/>
-          <line x1="12" y1="2" x2="12" y2="15"/>
-        </svg>
-        Tap to Share
-      </span>
-      <span class="line"></span>
-    </button>
-
     <div class="monogram"><img src="profile.jpg" alt="Bobbi Trehan-Young" /></div>
 
     <h1 class="name">Bobbi Trehan-Young</h1>
@@ -751,7 +764,7 @@ body::before {
       Save to Contacts
     </button>
 
-    <button class="btn primary outline" onclick="openShare()">
+    <button class="btn primary outline owner-only" onclick="openShare()">
       <svg viewBox="0 0 24 24">
         <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/>
         <polyline points="16 6 12 2 8 6"/>
@@ -759,10 +772,6 @@ body::before {
       </svg>
       Share Card
     </button>
-  </div>
-
-  <div class="install-banner" id="installBanner">
-    <b>Install on iPhone:</b> Tap <b>Share</b> &rarr; <b>Add to Home Screen</b>
   </div>
 
   <div class="footer">© 2026 Corporate Dynamism® &mdash; All rights reserved.</div>
@@ -836,6 +845,21 @@ body::before {
         </div>
         <span class="share-chev">&rarr;</span>
       </button>
+
+      <button class="share-opt" onclick="showInstall()">
+        <div class="share-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4">
+            <rect x="5" y="2" width="14" height="20" rx="2"/>
+            <line x1="12" y1="18" x2="12" y2="18"/>
+            <path d="M9 8h6M9 12h6"/>
+          </svg>
+        </div>
+        <div class="share-text">
+          <div class="share-title">Install on Home Screen</div>
+          <div class="share-desc">Use this card as a phone app</div>
+        </div>
+        <span class="share-chev">&rarr;</span>
+      </button>
     </div>
 
     <!-- QR display area, hidden by default -->
@@ -843,6 +867,18 @@ body::before {
       <div id="qrcode"></div>
       <p class="modal-hint">Scan with any phone camera<br>to receive Bobbi's contact card</p>
       <button class="back-btn" onclick="hideQR()">&larr; Back</button>
+    </div>
+
+    <!-- Install instructions, hidden by default -->
+    <div class="install-display" id="installDisplay">
+      <h4 class="install-title">Install on iPhone</h4>
+      <p class="install-step">1. Tap the <b>Share</b> icon in Safari</p>
+      <p class="install-step">2. Scroll &amp; tap <b>Add to Home Screen</b></p>
+      <p class="install-step">3. Tap <b>Add</b> in the top right</p>
+      <h4 class="install-title install-title-2">Install on Android</h4>
+      <p class="install-step">1. Tap the <b>&#8942;</b> menu in Chrome</p>
+      <p class="install-step">2. Tap <b>Install app</b> or <b>Add to Home screen</b></p>
+      <button class="back-btn" onclick="hideInstall()">&larr; Back</button>
     </div>
 
     <p class="share-foot">
@@ -1000,10 +1036,34 @@ async function saveContact() {
 function openShare() {
   document.getElementById("shareModal").classList.add("open");
   hideQR();
+  hideInstall();
 }
 function closeShare() {
   document.getElementById("shareModal").classList.remove("open");
   hideQR();
+  hideInstall();
+}
+
+// — Install on Home Screen panel —
+function showInstall() {
+  // If browser supports the install prompt (Android Chrome/Edge), trigger it
+  if (window.__deferredInstallPrompt) {
+    window.__deferredInstallPrompt.prompt();
+    window.__deferredInstallPrompt.userChoice.then(() => {
+      window.__deferredInstallPrompt = null;
+      closeShare();
+    });
+    return;
+  }
+  // Otherwise (iPhone, or already installed) show the manual instructions
+  document.querySelector("#shareModal .share-options").classList.add("hide");
+  document.getElementById("installDisplay").classList.add("show");
+}
+function hideInstall() {
+  const opts = document.querySelector("#shareModal .share-options");
+  if (opts) opts.classList.remove("hide");
+  const inst = document.getElementById("installDisplay");
+  if (inst) inst.classList.remove("show");
 }
 
 // — Share via URL (copy link) —
@@ -1119,47 +1179,32 @@ async function shareViaSystem() {
     toast("Open the hosted https:// site to use Tap to Share");
     return;
   }
-  // 2. Non-HTTPS host (still happens on http://)
+  // 2. Non-HTTPS host
   if (location.protocol !== "https:" && location.hostname !== "localhost") {
     toast("Tap to Share requires the https:// hosted site");
     return;
   }
-  // 3. Browser doesn't expose the API at all (desktop Edge, Firefox, etc.)
+  // 3. Browser doesn't expose the API
   if (!navigator.share) {
     toast("This browser doesn't support Tap to Share");
-    shareViaURL();
     return;
   }
 
-  await loadPhotoB64();
-
-  const shareData = {
-    title: "Bobbi Trehan-Young",
-    text: "Bobbi Trehan-Young — Founder & CEO",
-    url: CARD_URL
-  };
-
-  // Try sharing the .vcf file (best UX — Quick Share / AirDrop shows app picker)
+  // Share URL + text only. We deliberately do NOT attach the .vcf file —
+  // Quick Share / AirDrop refuse file shares between phones in many setups,
+  // which caused the "Share blocked" toast. The viewer will save the contact
+  // themselves with the Save button when they open the link.
   try {
-    const file = new File([getVCardBlob()], "Bobbi-Trehan-Young.vcf", { type: "text/vcard" });
-    if (navigator.canShare && navigator.canShare({ files: [file] })) {
-      await navigator.share({ ...shareData, files: [file] });
-      closeShare();
-      return;
-    }
-  } catch (e) {
-    console.warn("File share failed, falling back to link share:", e.name, e.message);
-  }
-
-  // Fallback: share just the URL
-  try {
-    await navigator.share(shareData);
+    await navigator.share({
+      title: "Bobbi Trehan-Young — Digital Card",
+      text: "Bobbi Trehan-Young — Founder & CEO",
+      url: CARD_URL
+    });
     closeShare();
   } catch (e) {
-    if (e.name === "AbortError") return; // user cancelled — silent
+    if (e.name === "AbortError") return; // user cancelled — silent, normal
     console.error("Share failed:", e.name, e.message);
-    toast("Share blocked — link copied instead");
-    shareViaURL();
+    toast("Share unavailable: " + e.name);
   }
 }
 
@@ -1178,32 +1223,21 @@ document.getElementById("shareModal").addEventListener("click", (e) => {
   if (e.target.id === "shareModal") closeShare();
 });
 
-// ============= INSTALL HINT (iOS) =============
+// ============= OWNER MODE DETECTION =============
+// Owner sees Share Card button. Viewer (default) does not.
+// To use as owner, open with ?owner=1 in the URL.
 (function() {
-  const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
-  const isStandalone = window.navigator.standalone || window.matchMedia('(display-mode: standalone)').matches;
-  if (isIOS && !isStandalone) {
-    setTimeout(() => {
-      document.getElementById("installBanner").classList.add("show");
-    }, 2000);
+  const params = new URLSearchParams(window.location.search);
+  if (params.get("owner") === "1") {
+    document.body.classList.add("is-owner");
   }
 })();
 
-// ============= PWA (Android) install prompt =============
-let deferredPrompt;
+// ============= PWA INSTALL PROMPT CAPTURE =============
+// Capture the install event for Android — we trigger it from the share modal
 window.addEventListener("beforeinstallprompt", (e) => {
   e.preventDefault();
-  deferredPrompt = e;
-  const banner = document.getElementById("installBanner");
-  banner.innerHTML = `<b>Install this card</b> &mdash; tap to add to your home screen`;
-  banner.classList.add("show");
-  banner.style.cursor = "pointer";
-  banner.onclick = async () => {
-    deferredPrompt.prompt();
-    await deferredPrompt.userChoice;
-    deferredPrompt = null;
-    banner.classList.remove("show");
-  };
+  window.__deferredInstallPrompt = e;
 });
 
 // Service worker for PWA install

@@ -2,12 +2,12 @@
   "name": "Bobbi Trehan-Young — Digital Card",
   "short_name": "Bobbi T-Y",
   "description": "Digital business card for Bobbi Trehan-Young",
-  "start_url": "./index.html",
+  "start_url": "./index.html?owner=1",
   "scope": "./",
   "display": "standalone",
   "orientation": "portrait",
-  "background_color": "#0A0A0A",
-  "theme_color": "#0A0A0A",
+  "background_color": "#0a0a09",
+  "theme_color": "#0a0a09",
   "icons": [
     {
       "src": "icon-192.png",

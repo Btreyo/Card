@@ -214,31 +214,31 @@ body::before {
 .name {
   font-family: 'Cormorant Garamond', serif;
   font-weight: 400;
-  font-size: 30px;
+  font-size: 34px;
   line-height: 1.05;
   text-align: center;
   letter-spacing: 0.005em;
   color: var(--bone);
-  margin-bottom: 6px;
+  margin-bottom: 8px;
 }
 .name .amp { color: var(--silver-bright); font-style: italic; font-weight: 300; }
 
 .title {
   text-align: center;
-  font-size: 10.5px;
+  font-size: 12px;
   letter-spacing: 0.32em;
   text-transform: uppercase;
   color: var(--silver-dim);
-  margin-bottom: 14px;
+  margin-bottom: 16px;
   font-weight: 400;
 }
 
 .credentials {
   text-align: center;
-  font-size: 10.5px;
+  font-size: 12px;
   line-height: 1.7;
   color: var(--silver-dim);
-  margin-bottom: 22px;
+  margin-bottom: 24px;
   padding: 0 6px;
   font-weight: 300;
   letter-spacing: 0.02em;
@@ -271,7 +271,7 @@ body::before {
   justify-content: space-between;
   align-items: baseline;
   gap: 12px;
-  font-size: 12px;
+  font-size: 13px;
   text-decoration: none;
   color: inherit;
   transition: opacity 0.25s ease;
@@ -280,13 +280,13 @@ body::before {
 .company:hover .nm { color: var(--silver-bright); }
 .company .nm {
   font-family: 'Cormorant Garamond', serif;
-  font-size: 15px;
+  font-size: 17px;
   color: var(--bone);
   letter-spacing: 0.02em;
   transition: color 0.25s ease;
 }
 .company .role {
-  font-size: 9.5px;
+  font-size: 10.5px;
   letter-spacing: 0.22em;
   text-transform: uppercase;
   color: var(--silver-bright);
@@ -481,15 +481,15 @@ body::before {
   justify-content: center;
   align-items: center;
   flex-wrap: wrap;
-  gap: 10px;
+  gap: 12px;
   margin-top: 22px;
   padding-top: 22px;
   border-top: 1px solid var(--line);
   animation: fadeIn 0.8s ease-out 0.6s both;
 }
 .social {
-  width: 40px;
-  height: 40px;
+  width: 46px;
+  height: 46px;
   border-radius: 50%;
   border: 1px solid var(--line);
   display: flex;
@@ -502,8 +502,8 @@ body::before {
   position: relative;
 }
 .social svg {
-  width: 16px;
-  height: 16px;
+  width: 19px;
+  height: 19px;
   fill: currentColor;
   transition: transform 0.3s ease;
 }
@@ -620,14 +620,14 @@ body::before {
 .footer {
   text-align: center;
   margin-top: 28px;
-  font-size: 9px;
-  letter-spacing: 0.4em;
-  text-transform: uppercase;
-  color: var(--silver-dim);
-  opacity: 0.5;
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  text-transform: none;
+  color: var(--silver-bright);
+  opacity: 0.85;
   font-family: 'Cormorant Garamond', serif;
   font-style: italic;
-  letter-spacing: 0.25em;
+  line-height: 1.5;
 }
 
 /* — Animations — */
@@ -1044,18 +1044,31 @@ function closeShare() {
   hideInstall();
 }
 
-// — Install on Home Screen panel —
-function showInstall() {
-  // If browser supports the install prompt (Android Chrome/Edge), trigger it
+// — Install on Home Screen panel (owner-only entry point) —
+async function showInstall() {
+  // Ensure we are on the owner URL before triggering install so the
+  // installed app launches into owner mode regardless of platform quirks.
+  const params = new URLSearchParams(window.location.search);
+  if (params.get("owner") !== "1") {
+    // Add owner flag without reloading the page state visibly
+    params.set("owner", "1");
+    history.replaceState(null, "", "?" + params.toString());
+  }
+
+  // Android / Edge / Chrome — fire the captured install prompt
   if (window.__deferredInstallPrompt) {
-    window.__deferredInstallPrompt.prompt();
-    window.__deferredInstallPrompt.userChoice.then(() => {
-      window.__deferredInstallPrompt = null;
-      closeShare();
-    });
+    try {
+      window.__deferredInstallPrompt.prompt();
+      await window.__deferredInstallPrompt.userChoice;
+    } catch (e) {
+      console.warn("Install prompt failed:", e);
+    }
+    window.__deferredInstallPrompt = null;
+    closeShare();
     return;
   }
-  // Otherwise (iPhone, or already installed) show the manual instructions
+
+  // iPhone Safari or any browser without programmatic install — show steps
   document.querySelector("#shareModal .share-options").classList.add("hide");
   document.getElementById("installDisplay").classList.add("show");
 }

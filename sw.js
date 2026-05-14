@@ -1,4 +1,4 @@
-const CACHE = "bobbi-card-v8";
+const CACHE = "bobbi-card-v9";
 const FILES = ["./", "./index.html", "./manifest.json", "./profile.jpg", "./icon-192.png", "./icon-512.png"];
 
 self.addEventListener("install", (e) => {

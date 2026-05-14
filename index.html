@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-<meta name="theme-color" content="#0a0a0a" />
+<meta name="theme-color" content="#0a0a09" />
 <meta name="apple-mobile-web-app-capable" content="yes" />
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
 <meta name="apple-mobile-web-app-title" content="Bobbi T-Y" />
@@ -22,21 +22,27 @@
 
 <style>
 :root {
-  --gold: #C9A961;
-  --gold-soft: #D4B97A;
-  --gold-deep: #8C7339;
-  --ink: #0A0A0A;
-  --ink-soft: #1A1A1A;
-  --cream: #F5F0E8;
-  --cream-dim: #C8C2B6;
-  --line: rgba(201, 169, 97, 0.18);
+  --ink: #0a0a09;
+  --ink-soft: #131311;
+  --silver: #8b897d;
+  --silver-bright: #b5b3a6;
+  --silver-dim: #9a978a;
+  --bone: #e6e3da;
+  --bone-soft: #c8c5bb;
+  --line: rgba(139, 137, 125, 0.16);
+  --line-strong: rgba(139, 137, 125, 0.32);
+  --cream: var(--bone);
+  --cream-dim: var(--silver-dim);
+  --gold: var(--silver-bright);
+  --gold-soft: var(--silver);
+  --gold-deep: var(--silver-dim);
 }
 
 * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 
 html, body {
   background: var(--ink);
-  color: var(--cream);
+  color: var(--bone);
   font-family: 'Inter', -apple-system, sans-serif;
   font-weight: 300;
   letter-spacing: 0.01em;
@@ -48,8 +54,8 @@ html, body {
 
 body {
   background:
-    radial-gradient(ellipse at top, rgba(201, 169, 97, 0.08) 0%, transparent 50%),
-    radial-gradient(ellipse at bottom, rgba(201, 169, 97, 0.04) 0%, transparent 60%),
+    radial-gradient(ellipse at top, rgba(139, 137, 125, 0.08) 0%, transparent 50%),
+    radial-gradient(ellipse at bottom, rgba(139, 137, 125, 0.04) 0%, transparent 60%),
     var(--ink);
   padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
 }
@@ -86,15 +92,15 @@ body::before {
   font-size: 11px;
   letter-spacing: 0.4em;
   text-transform: uppercase;
-  color: var(--gold);
+  color: var(--silver-bright);
   opacity: 0.85;
   animation: fadeIn 0.8s ease-out;
 }
 
 .brand-bar .dot {
-  width: 4px; height: 4px; background: var(--gold);
+  width: 4px; height: 4px; background: var(--silver-bright);
   border-radius: 50%;
-  box-shadow: 0 0 8px var(--gold);
+  box-shadow: 0 0 8px var(--silver-bright);
 }
 
 /* — The Card — */
@@ -107,7 +113,7 @@ body::before {
   box-shadow:
     0 1px 0 rgba(255,255,255,0.04) inset,
     0 30px 80px -20px rgba(0,0,0,0.6),
-    0 0 0 1px rgba(201, 169, 97, 0.03);
+    0 0 0 1px rgba(139, 137, 125, 0.03);
   overflow: hidden;
   animation: cardIn 1s cubic-bezier(0.2, 0.8, 0.2, 1) 0.1s both;
 }
@@ -117,7 +123,7 @@ body::before {
   content: '';
   position: absolute;
   width: 28px; height: 28px;
-  border-color: var(--gold);
+  border-color: var(--silver-bright);
   opacity: 0.5;
 }
 .card::before {
@@ -136,7 +142,7 @@ body::before {
   font-size: 11px;
   letter-spacing: 0.35em;
   text-transform: uppercase;
-  color: var(--gold);
+  color: var(--silver-bright);
   text-align: center;
   margin-bottom: 24px;
   display: flex;
@@ -144,7 +150,7 @@ body::before {
   justify-content: center;
   gap: 12px;
 }
-.crest .line { flex: 1; height: 1px; background: linear-gradient(90deg, transparent, var(--gold) 50%, transparent); opacity: 0.5; max-width: 60px; }
+.crest .line { flex: 1; height: 1px; background: linear-gradient(90deg, transparent, var(--silver-bright) 50%, transparent); opacity: 0.5; max-width: 60px; }
 
 /* Tappable share crest variant */
 .crest-share {
@@ -158,7 +164,7 @@ body::before {
   font-size: 11px;
   letter-spacing: 0.35em;
   text-transform: uppercase;
-  color: var(--gold);
+  color: var(--silver-bright);
   padding: 4px 0;
   transition: opacity 0.25s ease;
 }
@@ -174,7 +180,7 @@ body::before {
 .crest-icon {
   width: 12px; height: 12px;
   fill: none;
-  stroke: var(--gold);
+  stroke: var(--silver-bright);
   stroke-width: 1.5;
   transition: transform 0.25s ease;
 }
@@ -182,12 +188,12 @@ body::before {
 .monogram {
   width: 96px; height: 96px;
   margin: 0 auto 22px;
-  border: 1px solid var(--gold);
+  border: 1px solid var(--silver-bright);
   border-radius: 50%;
   overflow: hidden;
   position: relative;
   background: var(--ink-soft);
-  box-shadow: 0 0 0 4px var(--ink), 0 0 0 5px rgba(201, 169, 97, 0.4), 0 8px 24px rgba(0,0,0,0.4);
+  box-shadow: 0 0 0 4px var(--ink), 0 0 0 5px rgba(139, 137, 125, 0.4), 0 8px 24px rgba(0,0,0,0.4);
 }
 .monogram img {
   width: 100%;
@@ -200,7 +206,7 @@ body::before {
   position: absolute;
   inset: 0;
   border-radius: 50%;
-  box-shadow: inset 0 0 0 1px rgba(201, 169, 97, 0.4);
+  box-shadow: inset 0 0 0 1px rgba(139, 137, 125, 0.4);
   pointer-events: none;
 }
 
@@ -211,17 +217,17 @@ body::before {
   line-height: 1.05;
   text-align: center;
   letter-spacing: 0.005em;
-  color: var(--cream);
+  color: var(--bone);
   margin-bottom: 6px;
 }
-.name .amp { color: var(--gold); font-style: italic; font-weight: 300; }
+.name .amp { color: var(--silver-bright); font-style: italic; font-weight: 300; }
 
 .title {
   text-align: center;
   font-size: 10.5px;
   letter-spacing: 0.32em;
   text-transform: uppercase;
-  color: var(--cream-dim);
+  color: var(--silver-dim);
   margin-bottom: 14px;
   font-weight: 400;
 }
@@ -230,21 +236,21 @@ body::before {
   text-align: center;
   font-size: 10.5px;
   line-height: 1.7;
-  color: var(--cream-dim);
+  color: var(--silver-dim);
   margin-bottom: 22px;
   padding: 0 6px;
   font-weight: 300;
   letter-spacing: 0.02em;
 }
 .credentials .pipe {
-  color: var(--gold);
+  color: var(--silver-bright);
   margin: 0 6px;
   opacity: 0.55;
 }
 
 .divider {
   width: 40px; height: 1px;
-  background: var(--gold);
+  background: var(--silver-bright);
   margin: 0 auto 22px;
   opacity: 0.6;
 }
@@ -254,7 +260,7 @@ body::before {
   flex-direction: column;
   gap: 10px;
   padding: 18px 16px;
-  background: rgba(201, 169, 97, 0.03);
+  background: rgba(139, 137, 125, 0.03);
   border: 1px solid var(--line);
   border-radius: 10px;
   margin-bottom: 6px;
@@ -270,11 +276,11 @@ body::before {
   transition: opacity 0.25s ease;
 }
 .company:hover { opacity: 0.75; }
-.company:hover .nm { color: var(--gold); }
+.company:hover .nm { color: var(--silver-bright); }
 .company .nm {
   font-family: 'Cormorant Garamond', serif;
   font-size: 15px;
-  color: var(--cream);
+  color: var(--bone);
   letter-spacing: 0.02em;
   transition: color 0.25s ease;
 }
@@ -282,7 +288,7 @@ body::before {
   font-size: 9.5px;
   letter-spacing: 0.22em;
   text-transform: uppercase;
-  color: var(--gold);
+  color: var(--silver-bright);
   white-space: nowrap;
 }
 
@@ -291,7 +297,7 @@ body::before {
   font-style: italic;
   font-size: 14px;
   text-align: center;
-  color: var(--cream-dim);
+  color: var(--silver-dim);
   line-height: 1.5;
   padding: 0 8px;
 }
@@ -308,7 +314,7 @@ body::before {
 .btn {
   background: transparent;
   border: 1px solid var(--line);
-  color: var(--cream);
+  color: var(--bone);
   padding: 16px 14px;
   border-radius: 12px;
   font-family: 'Inter', sans-serif;
@@ -327,31 +333,31 @@ body::before {
 }
 .btn:active { transform: scale(0.97); }
 .btn:hover {
-  border-color: var(--gold);
-  background: rgba(201, 169, 97, 0.05);
+  border-color: var(--silver-bright);
+  background: rgba(139, 137, 125, 0.05);
 }
-.btn svg { width: 22px; height: 22px; stroke: var(--gold); fill: none; stroke-width: 1.2; }
+.btn svg { width: 22px; height: 22px; stroke: var(--silver-bright); fill: none; stroke-width: 1.2; }
 
 .btn.primary {
   grid-column: span 2;
-  background: var(--gold);
+  background: var(--silver-bright);
   color: var(--ink);
-  border-color: var(--gold);
+  border-color: var(--silver-bright);
   font-weight: 500;
   letter-spacing: 0.22em;
   padding: 18px;
 }
 .btn.primary svg { stroke: var(--ink); stroke-width: 1.5; }
-.btn.primary:hover { background: var(--gold-soft); }
+.btn.primary:hover { background: var(--silver); }
 
 .btn.primary.outline {
   background: transparent;
-  color: var(--gold);
-  border: 1px solid var(--gold);
+  color: var(--silver-bright);
+  border: 1px solid var(--silver-bright);
 }
-.btn.primary.outline svg { stroke: var(--gold); }
+.btn.primary.outline svg { stroke: var(--silver-bright); }
 .btn.primary.outline:hover {
-  background: rgba(201, 169, 97, 0.08);
+  background: rgba(139, 137, 125, 0.08);
 }
 
 .actions {
@@ -367,10 +373,10 @@ body::before {
   align-items: center;
   gap: 14px;
   padding: 14px 16px;
-  background: rgba(201, 169, 97, 0.03);
+  background: rgba(139, 137, 125, 0.03);
   border: 1px solid var(--line);
   border-radius: 12px;
-  color: var(--cream);
+  color: var(--bone);
   cursor: pointer;
   text-align: left;
   font-family: inherit;
@@ -378,10 +384,10 @@ body::before {
   width: 100%;
 }
 .share-opt:hover {
-  border-color: var(--gold);
-  background: rgba(201, 169, 97, 0.08);
+  border-color: var(--silver-bright);
+  background: rgba(139, 137, 125, 0.08);
 }
-.share-opt:hover .share-chev { transform: translateX(3px); color: var(--gold); }
+.share-opt:hover .share-chev { transform: translateX(3px); color: var(--silver-bright); }
 .share-opt:active { transform: scale(0.98); }
 .share-icon {
   width: 38px; height: 38px;
@@ -391,15 +397,15 @@ body::before {
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  color: var(--gold);
-  background: rgba(201, 169, 97, 0.04);
+  color: var(--silver-bright);
+  background: rgba(139, 137, 125, 0.04);
 }
 .share-icon svg { width: 18px; height: 18px; }
 .share-text { flex: 1; }
 .share-title {
   font-family: 'Cormorant Garamond', serif;
   font-size: 16px;
-  color: var(--cream);
+  color: var(--bone);
   letter-spacing: 0.02em;
   line-height: 1.2;
 }
@@ -407,11 +413,11 @@ body::before {
   font-size: 10px;
   letter-spacing: 0.18em;
   text-transform: uppercase;
-  color: var(--cream-dim);
+  color: var(--silver-dim);
   margin-top: 3px;
 }
 .share-chev {
-  color: var(--cream-dim);
+  color: var(--silver-dim);
   font-size: 16px;
   transition: all 0.25s ease;
 }
@@ -429,7 +435,7 @@ body::before {
   margin-top: 16px;
   background: transparent;
   border: 1px solid var(--line);
-  color: var(--cream-dim);
+  color: var(--silver-dim);
   padding: 10px 20px;
   border-radius: 100px;
   font-size: 10px;
@@ -439,7 +445,7 @@ body::before {
   font-family: inherit;
   transition: all 0.25s ease;
 }
-.back-btn:hover { border-color: var(--gold); color: var(--gold); }
+.back-btn:hover { border-color: var(--silver-bright); color: var(--silver-bright); }
 
 /* — Socials — */
 .socials {
@@ -461,10 +467,10 @@ body::before {
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--gold);
+  color: var(--silver-bright);
   text-decoration: none;
   transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
-  background: rgba(201, 169, 97, 0.02);
+  background: rgba(139, 137, 125, 0.02);
   position: relative;
 }
 .social svg {
@@ -474,11 +480,11 @@ body::before {
   transition: transform 0.3s ease;
 }
 .social:hover {
-  border-color: var(--gold);
-  background: var(--gold);
+  border-color: var(--silver-bright);
+  background: var(--silver-bright);
   color: var(--ink);
   transform: translateY(-2px);
-  box-shadow: 0 8px 20px -8px rgba(201, 169, 97, 0.5);
+  box-shadow: 0 8px 20px -8px rgba(139, 137, 125, 0.5);
 }
 .social:hover svg { transform: scale(1.1); }
 .social:active { transform: translateY(0); }
@@ -518,7 +524,7 @@ body::before {
   border-radius: 50%;
   border: 1px solid var(--line);
   background: transparent;
-  color: var(--cream);
+  color: var(--bone);
   cursor: pointer;
   font-size: 16px;
   display: flex;
@@ -529,30 +535,30 @@ body::before {
 .modal-title {
   font-family: 'Cormorant Garamond', serif;
   font-size: 22px;
-  color: var(--cream);
+  color: var(--bone);
   margin-bottom: 4px;
 }
 .modal-sub {
   font-size: 10px;
   letter-spacing: 0.3em;
   text-transform: uppercase;
-  color: var(--gold);
+  color: var(--silver-bright);
   margin-bottom: 22px;
 }
 
 #qrcode {
-  background: var(--cream);
+  background: var(--bone);
   padding: 18px;
   border-radius: 12px;
   display: inline-block;
   margin-bottom: 18px;
-  box-shadow: 0 0 0 1px var(--gold);
+  box-shadow: 0 0 0 1px var(--silver-bright);
 }
 #qrcode img, #qrcode canvas { display: block; }
 
 .modal-hint {
   font-size: 11px;
-  color: var(--cream-dim);
+  color: var(--silver-dim);
   line-height: 1.6;
   letter-spacing: 0.04em;
 }
@@ -563,7 +569,7 @@ body::before {
   bottom: 32px;
   left: 50%;
   transform: translateX(-50%) translateY(20px);
-  background: var(--gold);
+  background: var(--silver-bright);
   color: var(--ink);
   padding: 12px 22px;
   border-radius: 100px;
@@ -586,7 +592,7 @@ body::before {
   font-size: 9px;
   letter-spacing: 0.4em;
   text-transform: uppercase;
-  color: var(--cream-dim);
+  color: var(--silver-dim);
   opacity: 0.5;
   font-family: 'Cormorant Garamond', serif;
   font-style: italic;
@@ -608,16 +614,16 @@ body::before {
   display: none;
   margin-top: 16px;
   padding: 12px 16px;
-  background: rgba(201, 169, 97, 0.08);
+  background: rgba(139, 137, 125, 0.08);
   border: 1px solid var(--line);
   border-radius: 10px;
   font-size: 11px;
-  color: var(--cream-dim);
+  color: var(--silver-dim);
   text-align: center;
   letter-spacing: 0.05em;
 }
 .install-banner.show { display: block; animation: fadeIn 0.5s ease-out; }
-.install-banner b { color: var(--gold); font-weight: 500; }
+.install-banner b { color: var(--silver-bright); font-weight: 500; }
 
 </style>
 </head>
@@ -1059,3 +1065,4 @@ if ("serviceWorker" in navigator) {
 
 </body>
 </html>
+

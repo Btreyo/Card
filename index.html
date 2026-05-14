@@ -49,7 +49,8 @@ html, body {
   min-height: 100vh;
   min-height: 100dvh;
   overflow-x: hidden;
-  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+  touch-action: pan-y;
 }
 
 body {
@@ -389,6 +390,33 @@ body::before {
 }
 .share-opt:hover .share-chev { transform: translateX(3px); color: var(--silver-bright); }
 .share-opt:active { transform: scale(0.98); }
+
+/* Featured (primary) share option */
+.share-opt.featured {
+  border-color: var(--silver-bright);
+  background: rgba(139, 137, 125, 0.08);
+}
+.share-opt.featured .share-icon {
+  border-color: var(--silver-bright);
+  background: var(--silver-bright);
+  color: var(--ink);
+}
+.share-opt.featured:hover {
+  background: rgba(139, 137, 125, 0.14);
+}
+
+/* Helper note at bottom of share modal */
+.share-foot {
+  font-size: 10px;
+  line-height: 1.55;
+  color: var(--silver-dim);
+  text-align: center;
+  margin-top: 16px;
+  padding-top: 14px;
+  border-top: 1px solid var(--line);
+  letter-spacing: 0.04em;
+}
+
 .share-icon {
   width: 38px; height: 38px;
   border-radius: 50%;
@@ -749,16 +777,19 @@ body::before {
     <p class="modal-sub">Choose a method</p>
 
     <div class="share-options">
-      <button class="share-opt" onclick="shareViaURL()">
+      <button class="share-opt featured" onclick="shareViaSystem()">
         <div class="share-icon">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4">
-            <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/>
-            <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>
+            <circle cx="18" cy="5" r="3"/>
+            <circle cx="6" cy="12" r="3"/>
+            <circle cx="18" cy="19" r="3"/>
+            <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/>
+            <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
           </svg>
         </div>
         <div class="share-text">
-          <div class="share-title">Copy URL</div>
-          <div class="share-desc">Send a shareable link</div>
+          <div class="share-title">Tap to Share</div>
+          <div class="share-desc">Quick Share &middot; AirDrop &middot; Apps</div>
         </div>
         <span class="share-chev">&rarr;</span>
       </button>
@@ -779,6 +810,20 @@ body::before {
         <span class="share-chev">&rarr;</span>
       </button>
 
+      <button class="share-opt" onclick="shareViaURL()">
+        <div class="share-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4">
+            <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/>
+            <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>
+          </svg>
+        </div>
+        <div class="share-text">
+          <div class="share-title">Copy Link</div>
+          <div class="share-desc">Paste anywhere</div>
+        </div>
+        <span class="share-chev">&rarr;</span>
+      </button>
+
       <button class="share-opt" onclick="shareViaNFC()">
         <div class="share-icon">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4">
@@ -786,25 +831,8 @@ body::before {
           </svg>
         </div>
         <div class="share-text">
-          <div class="share-title">NFC Tap</div>
-          <div class="share-desc">Write to a tag</div>
-        </div>
-        <span class="share-chev">&rarr;</span>
-      </button>
-
-      <button class="share-opt" onclick="shareViaSystem()">
-        <div class="share-icon">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4">
-            <circle cx="18" cy="5" r="3"/>
-            <circle cx="6" cy="12" r="3"/>
-            <circle cx="18" cy="19" r="3"/>
-            <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/>
-            <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
-          </svg>
-        </div>
-        <div class="share-text">
-          <div class="share-title">More</div>
-          <div class="share-desc">Apple / Android share sheet</div>
+          <div class="share-title">Write to NFC Tag</div>
+          <div class="share-desc">For NFC sticker / ring / card</div>
         </div>
         <span class="share-chev">&rarr;</span>
       </button>
@@ -816,6 +844,10 @@ body::before {
       <p class="modal-hint">Scan with any phone camera<br>to receive Bobbi's contact card</p>
       <button class="back-btn" onclick="hideQR()">&larr; Back</button>
     </div>
+
+    <p class="share-foot">
+      Tap to Share opens your phone's native sharing &mdash; Quick Share on Android, AirDrop on iPhone &mdash; for direct phone-to-phone transfer.
+    </p>
   </div>
 </div>
 
@@ -870,6 +902,9 @@ async function loadPhotoB64() {
 loadPhotoB64();
 
 // ============= vCard GENERATION =============
+// We use vCard 3.0 (most universally supported) but list every social URL
+// as both X-SOCIALPROFILE (Apple-style) AND a labelled URL line (universal),
+// because most contacts apps display URLs but ignore X-SOCIALPROFILE.
 function generateVCard() {
   const lines = [
     "BEGIN:VCARD",
@@ -880,16 +915,48 @@ function generateVCard() {
     `TITLE:${contact.title}`,
     contact.email ? `EMAIL;TYPE=INTERNET,PREF:${contact.email}` : "",
     contact.emailWork ? `EMAIL;TYPE=INTERNET,WORK:${contact.emailWork}` : "",
-    contact.phone ? `TEL;TYPE=CELL:${contact.phone}` : "",
-    contact.website ? `URL:${contact.website}` : "",
+    contact.phone ? `TEL;TYPE=CELL,VOICE:${contact.phone}` : "",
     `ADR;TYPE=WORK:;;;${contact.city};;;${contact.country}`,
-    contact.socials.linkedin ? `X-SOCIALPROFILE;TYPE=linkedin:${contact.socials.linkedin}` : "",
-    contact.socials.instagram ? `X-SOCIALPROFILE;TYPE=instagram:${contact.socials.instagram}` : "",
-    contact.socials.facebook ? `X-SOCIALPROFILE;TYPE=facebook:${contact.socials.facebook}` : "",
-    contact.socials.x ? `X-SOCIALPROFILE;TYPE=twitter:${contact.socials.x}` : "",
-    contact.socials.tiktok ? `X-SOCIALPROFILE;TYPE=tiktok:${contact.socials.tiktok}` : "",
-    contact.socials.whatsapp ? `X-SOCIALPROFILE;TYPE=whatsapp:${contact.socials.whatsapp}` : "",
   ];
+
+  // Each company website as its own URL line (so they're tappable individually)
+  const websites = [
+    { label: "Bobbi | London", url: "https://www.bobbildn.com/" },
+    { label: "eTech Fusion Group", url: "https://www.etechfusiongroup.com/" },
+    { label: "Corporate Dynamism", url: "https://www.corporatedynamism.com/" },
+  ];
+  websites.forEach((w, i) => {
+    // First one without label-suffix so it's the "primary" website on most platforms
+    if (i === 0) {
+      lines.push(`URL;TYPE=WORK:${w.url}`);
+    } else {
+      lines.push(`URL;TYPE=WORK:${w.url}`);
+    }
+  });
+
+  // Social profiles — push as URL (universal) AND X-SOCIALPROFILE (Apple).
+  // TYPE labels must be plain alphanumeric (no spaces/slashes) to satisfy strict parsers.
+  const socialEntries = [
+    { key: "linkedin",  label: "LinkedIn",   type: "linkedin"  },
+    { key: "instagram", label: "Instagram",  type: "instagram" },
+    { key: "facebook",  label: "Facebook",   type: "facebook"  },
+    { key: "x",         label: "X",          type: "twitter"   },
+    { key: "tiktok",    label: "TikTok",     type: "tiktok"    },
+    { key: "whatsapp",  label: "WhatsApp",   type: "whatsapp"  },
+  ];
+  socialEntries.forEach(s => {
+    const url = contact.socials[s.key];
+    if (!url) return;
+    // Labelled URL field — shows up in iOS/Android Contacts as a tappable link
+    lines.push(`URL;TYPE=${s.label}:${url}`);
+    // Apple-recognised social profile field
+    lines.push(`X-SOCIALPROFILE;TYPE=${s.type}:${url}`);
+  });
+
+  // WhatsApp also as IMPP messaging URL — opens chat directly on iOS
+  if (contact.socials.whatsapp) {
+    lines.push(`IMPP;X-SERVICE-TYPE=WhatsApp:${contact.socials.whatsapp}`);
+  }
 
   // Embed photo if available — broken into 75-char lines per vCard 3.0 spec
   if (PHOTO_B64) {
@@ -897,7 +964,13 @@ function generateVCard() {
     lines.push(`PHOTO;ENCODING=b;TYPE=JPEG:${folded}`);
   }
 
-  lines.push(`NOTE:${contact.notes}`);
+  // Escape any commas/semicolons in the note so it doesn't break parsing
+  const safeNote = (contact.notes || "")
+    .replace(/\\/g, "\\\\")
+    .replace(/\n/g, "\\n")
+    .replace(/,/g, "\\,")
+    .replace(/;/g, "\\;");
+  lines.push(`NOTE:${safeNote}`);
   lines.push(`REV:${new Date().toISOString()}`);
   lines.push("END:VCARD");
   return lines.filter(Boolean).join("\r\n");
@@ -972,22 +1045,43 @@ function hideQR() {
 
 // — Share via NFC (Android Chrome only) —
 async function shareViaNFC() {
+  const ua = navigator.userAgent;
+  const isIOS = /iPad|iPhone|iPod/.test(ua) && !window.MSStream;
+  const isAndroid = /Android/i.test(ua);
+
   // iPhone Safari cannot write NFC from the browser at all
-  const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
   if (isIOS) {
-    toast("iPhone can't write NFC from browser — use Android");
+    toast("iPhone can't write NFC — use Shortcuts app");
     return;
   }
-  // Web NFC API only exists in Android Chrome 89+
+  if (!isAndroid) {
+    toast("NFC writing needs an Android phone");
+    return;
+  }
+
+  // Web NFC API exists in Chrome / Edge / Opera / Samsung Internet on Android
   if (!("NDEFReader" in window)) {
-    toast("NFC writing needs Android Chrome");
+    // Detect Firefox / in-app browsers
+    if (/FxiOS|Firefox/i.test(ua)) {
+      toast("Firefox doesn't support NFC — open in Chrome");
+    } else if (/Instagram|FBAN|FBAV|LinkedInApp|Line|MicroMessenger/i.test(ua)) {
+      toast("Open in Chrome browser, not in-app");
+    } else {
+      toast("NFC writing needs Chrome, Edge, or Samsung Internet");
+    }
     return;
   }
+
   // Web NFC requires HTTPS
   if (location.protocol !== "https:" && location.hostname !== "localhost") {
     toast("NFC requires the hosted https:// site");
     return;
   }
+
+  // Show URL size so we can spot oversized URL → small tag issues
+  const urlBytes = new TextEncoder().encode(CARD_URL).length;
+  console.log("NFC write attempt — URL bytes:", urlBytes, "URL:", CARD_URL);
+
   try {
     const ndef = new NDEFReader();
     toast("Hold a writable NFC tag near your phone...");
@@ -996,26 +1090,43 @@ async function shareViaNFC() {
     });
     toast("NFC tag written successfully");
   } catch (e) {
-    console.error("NFC write failed:", e.name, e.message);
+    console.error("NFC write failed:", e.name, "|", e.message, "| URL bytes:", urlBytes);
     if (e.name === "NotAllowedError") {
-      toast("NFC permission denied — enable NFC in settings");
+      toast("NFC permission denied — enable NFC in Android settings");
     } else if (e.name === "NotSupportedError") {
-      toast("This device doesn't support NFC writing");
+      // The big one — most likely causes ranked
+      if (urlBytes > 120) {
+        toast("URL too long for tag — try a shorter URL or NTAG215+");
+      } else {
+        toast("Tag locked, incompatible, or NFC off in settings");
+      }
     } else if (e.name === "NetworkError") {
-      toast("Tag not detected — hold it closer and steady");
+      toast("Tag not detected — hold closer & don't move it");
     } else if (e.name === "AbortError") {
       toast("NFC write cancelled");
+    } else if (e.name === "SecurityError") {
+      toast("Browser blocked NFC — check site permissions");
     } else {
-      toast("Couldn't write tag — must be unlocked NTAG");
+      toast("NFC error: " + e.name);
     }
   }
 }
 
-// — System share sheet (Apple / Android native) —
+// — System share sheet (Apple AirDrop / Android Quick Share) —
 async function shareViaSystem() {
-  // navigator.share only exists on iOS Safari, Android Chrome, etc. — and only on HTTPS
+  // 1. Local file (file://) — most common failure mode during development
+  if (location.protocol === "file:") {
+    toast("Open the hosted https:// site to use Tap to Share");
+    return;
+  }
+  // 2. Non-HTTPS host (still happens on http://)
+  if (location.protocol !== "https:" && location.hostname !== "localhost") {
+    toast("Tap to Share requires the https:// hosted site");
+    return;
+  }
+  // 3. Browser doesn't expose the API at all (desktop Edge, Firefox, etc.)
   if (!navigator.share) {
-    toast("Share sheet unavailable — link copied instead");
+    toast("This browser doesn't support Tap to Share");
     shareViaURL();
     return;
   }
@@ -1028,7 +1139,7 @@ async function shareViaSystem() {
     url: CARD_URL
   };
 
-  // Try sharing the .vcf file (best UX — shows AirDrop / Messages / Mail / WhatsApp)
+  // Try sharing the .vcf file (best UX — Quick Share / AirDrop shows app picker)
   try {
     const file = new File([getVCardBlob()], "Bobbi-Trehan-Young.vcf", { type: "text/vcard" });
     if (navigator.canShare && navigator.canShare({ files: [file] })) {
@@ -1037,7 +1148,7 @@ async function shareViaSystem() {
       return;
     }
   } catch (e) {
-    console.warn("File share failed, falling back to link share:", e.name);
+    console.warn("File share failed, falling back to link share:", e.name, e.message);
   }
 
   // Fallback: share just the URL
@@ -1047,7 +1158,7 @@ async function shareViaSystem() {
   } catch (e) {
     if (e.name === "AbortError") return; // user cancelled — silent
     console.error("Share failed:", e.name, e.message);
-    toast("Share unavailable — link copied instead");
+    toast("Share blocked — link copied instead");
     shareViaURL();
   }
 }

@@ -574,7 +574,7 @@ body::before {
   padding: 12px 22px;
   border-radius: 100px;
   font-size: 11px;
-  letter-spacing: 0.2em;
+  letter-spacing: 0.18em;
   text-transform: uppercase;
   font-weight: 500;
   opacity: 0;
@@ -582,6 +582,9 @@ body::before {
   transition: all 0.3s ease;
   z-index: 200;
   box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+  max-width: calc(100vw - 40px);
+  text-align: center;
+  line-height: 1.4;
 }
 .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
@@ -655,7 +658,7 @@ body::before {
     <div class="monogram"><img src="profile.jpg" alt="Bobbi Trehan-Young" /></div>
 
     <h1 class="name">Bobbi Trehan-Young</h1>
-    <p class="title">Founder &middot; Chief Executive Officer</p>
+    <p class="title">Polymath &middot; Entrepreneur</p>
 
     <p class="credentials">
       Microsoft Subject Matter Expert &amp; Architect
@@ -953,8 +956,8 @@ function shareViaQR() {
     text: CARD_URL,
     width: 220,
     height: 220,
-    colorDark: "#0A0A0A",
-    colorLight: "#F5F0E8",
+    colorDark: "#0A0A09",
+    colorLight: "#E6E3DA",
     correctLevel: QRCode.CorrectLevel.H
   });
   document.querySelector("#shareModal .share-options").classList.add("hide");
@@ -969,49 +972,84 @@ function hideQR() {
 
 // — Share via NFC (Android Chrome only) —
 async function shareViaNFC() {
+  // iPhone Safari cannot write NFC from the browser at all
+  const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+  if (isIOS) {
+    toast("iPhone can't write NFC from browser — use Android");
+    return;
+  }
+  // Web NFC API only exists in Android Chrome 89+
   if (!("NDEFReader" in window)) {
-    toast("NFC writing requires Android Chrome");
+    toast("NFC writing needs Android Chrome");
+    return;
+  }
+  // Web NFC requires HTTPS
+  if (location.protocol !== "https:" && location.hostname !== "localhost") {
+    toast("NFC requires the hosted https:// site");
     return;
   }
   try {
     const ndef = new NDEFReader();
-    toast("Hold a writable NFC tag to your phone");
+    toast("Hold a writable NFC tag near your phone...");
     await ndef.write({
       records: [{ recordType: "url", data: CARD_URL }]
     });
     toast("NFC tag written successfully");
   } catch (e) {
+    console.error("NFC write failed:", e.name, e.message);
     if (e.name === "NotAllowedError") {
-      toast("NFC permission denied");
+      toast("NFC permission denied — enable NFC in settings");
+    } else if (e.name === "NotSupportedError") {
+      toast("This device doesn't support NFC writing");
+    } else if (e.name === "NetworkError") {
+      toast("Tag not detected — hold it closer and steady");
+    } else if (e.name === "AbortError") {
+      toast("NFC write cancelled");
     } else {
-      toast("Could not write to NFC tag");
+      toast("Couldn't write tag — must be unlocked NTAG");
     }
   }
 }
 
 // — System share sheet (Apple / Android native) —
 async function shareViaSystem() {
+  // navigator.share only exists on iOS Safari, Android Chrome, etc. — and only on HTTPS
+  if (!navigator.share) {
+    toast("Share sheet unavailable — link copied instead");
+    shareViaURL();
+    return;
+  }
+
   await loadPhotoB64();
+
   const shareData = {
     title: "Bobbi Trehan-Young",
     text: "Bobbi Trehan-Young — Founder & CEO",
     url: CARD_URL
   };
 
+  // Try sharing the .vcf file (best UX — shows AirDrop / Messages / Mail / WhatsApp)
   try {
     const file = new File([getVCardBlob()], "Bobbi-Trehan-Young.vcf", { type: "text/vcard" });
     if (navigator.canShare && navigator.canShare({ files: [file] })) {
       await navigator.share({ ...shareData, files: [file] });
+      closeShare();
       return;
     }
-  } catch (e) { /* fall through */ }
-
-  if (navigator.share) {
-    try { await navigator.share(shareData); return; }
-    catch (e) { return; }
+  } catch (e) {
+    console.warn("File share failed, falling back to link share:", e.name);
   }
 
-  shareViaURL();
+  // Fallback: share just the URL
+  try {
+    await navigator.share(shareData);
+    closeShare();
+  } catch (e) {
+    if (e.name === "AbortError") return; // user cancelled — silent
+    console.error("Share failed:", e.name, e.message);
+    toast("Share unavailable — link copied instead");
+    shareViaURL();
+  }
 }
 
 // ============= TOAST =============
